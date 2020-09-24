@@ -16,7 +16,7 @@ export default class UsersController {
         throw new AppError('Only admin users can perform this request', 401);
       }
 
-      const { login, name, email, password, admin } = request.body;
+      const { login, name, email, password } = request.body;
 
       const createUser = container.resolve(CreateUserService);
 
@@ -25,7 +25,7 @@ export default class UsersController {
         name,
         email,
         password,
-        admin,
+        admin: false,
       });
 
       return response.json(classToClass(user));
@@ -49,6 +49,29 @@ export default class UsersController {
       await deleteUser.execute({ loggedIdUser, user_id });
 
       return response.status(200).json();
+    } catch (err) {
+      return response.status(400).json({ error: err.message });
+    }
+  }
+
+  public async createAdminUser(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
+    try {
+      const { login, name, email, password } = request.body;
+
+      const createUser = container.resolve(CreateUserService);
+
+      const user = await createUser.execute({
+        login,
+        name,
+        email,
+        password,
+        admin: true,
+      });
+
+      return response.json(classToClass(user));
     } catch (err) {
       return response.status(400).json({ error: err.message });
     }

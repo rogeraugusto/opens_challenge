@@ -20,7 +20,6 @@ profileRouter.put(
       email: Joi.string().email().required(),
       old_password: Joi.string().min(6),
       password: Joi.string().min(6),
-      password_confirmation: Joi.string().min(6).valid(Joi.ref('password')),
     },
   }),
   profileController.update,
